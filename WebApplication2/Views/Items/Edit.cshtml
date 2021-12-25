@@ -1,0 +1,63 @@
+﻿@using WebApplication2.Models.Entities
+@model Final.Models.ItemViewModels.EditItemViewModel
+@{
+	ViewData["Title"] = "Edit";
+}
+
+<h1>Edit</h1>
+
+<h4>Item</h4>
+<hr />
+<div class="row">
+	<div class="col-md-4">
+		<form asp-action="Edit">
+			<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+			<div class="form-group">
+				<label asp-for="Name"></label>
+				<input asp-for="Name" class="form-control"/>
+				<span asp-validation-for="Name" class="text-danger"></span>
+			</div>
+			<div class="form-group">
+				<label asp-for="Material"></label>
+				<input asp-for="Material" class="form-control"/>
+				<span asp-validation-for="Material" class="text-danger"></span>
+			</div>
+			<div class="form-group">
+				<label asp-for="Uin" class="control-label"></label>
+				<input asp-for="Uin" class="form-control"/>
+				<span asp-validation-for="Uin" class="text-danger"></span>
+			</div>
+			<div class="form-group">
+				<label asp-for="InstallStatus" class="control-label"></label>
+				<div class="col-md-10">
+					<select asp-for="InstallStatus" asp-items="Html.GetEnumSelectList<InstallStatus>()">
+						<option selected="selected" value="">Select the status</option>
+					</select>
+					<span asp-validation-for="InstallStatus" class="text-danger"></span>
+				</div>
+			</div>
+			<div class="form-group">
+				<label asp-for="WarehouseStatus" class="control-label"></label>
+				<div class="col-md-10">
+					<select asp-for="WarehouseStatus" asp-items="Html.GetEnumSelectList<WarehouseStatus>()">
+						<option selected="selected" value="">Select the status</option>
+					</select>
+					<span asp-validation-for="WarehouseStatus" class="text-danger"></span>
+				</div>
+			</div>
+			<div class="form-group">
+				<input type="submit" value="Save" class="btn btn-primary"/>
+			</div>
+		</form>
+	</div>
+</div>
+
+<div>
+	<a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts{
+	@{
+		await Html.RenderPartialAsync("_ValidationScriptsPartial");
+	}
+}

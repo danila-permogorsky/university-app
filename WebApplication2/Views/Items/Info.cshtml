@@ -1,0 +1,48 @@
+﻿@model Final.Models.ViewModels.ItemViewModels.ItemViewModel
+
+@{
+	ViewData["Title"] = "Info";
+}
+
+<h1>Info</h1>
+
+<div>
+	<h4>Item</h4>
+	<hr/>
+	<dl class="row">
+		<dt class="col-sm-2">
+			<label asp-for="Name"></label>
+		</dt>
+		<dd class="col-sm-10">
+			@Model.Name
+		</dd>
+		<dt class="col-sm-2">
+			<label asp-for="Material"></label>
+		</dt>
+		<dd class="col-sm-10">
+			@Model.Material
+		</dd>
+		<dt class="col-sm-2">
+			<label asp-for="Uin"></label>
+		</dt>
+		<dd class="col-sm-10">
+			@Model.Uin
+		</dd>
+		<dt class="col-sm-2">
+			<label asp-for="InstallStatus"></label>
+		</dt>
+		<dd class="col-sm-10">
+			@Model.InstallStatus
+		</dd>
+		<dt class="col-sm-2">
+			<label asp-for="WarehouseStatus"></label>
+		</dt>
+		<dd class="col-sm-10">
+			@Model.WarehouseStatus
+		</dd>
+	</dl>
+</div>
+<div>
+	<a asp-action="Edit" asp-route-id="@Model.Id">Edit</a>
+	<a asp-action="Index">Back to List</a>
+</div>

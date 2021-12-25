@@ -1,0 +1,60 @@
+﻿@model System.Collections.Generic.IEnumerable<Final.Models.ViewModels.ItemViewModels.ItemViewModel>
+
+@{
+	ViewData["Title"] = "Index";
+}
+ 
+<h1>Items</h1>
+ 
+<p>
+	<a asp-action="Create">Create new</a>
+</p>
+<table class="table">
+	<thead>
+	<tr>
+		<th>
+			<label asp-for="@Model.First().Name"></label>
+		</th>
+		<th>
+			<label asp-for="@Model.First().Material"></label>
+		</th>
+		<th>
+			<label asp-for="@Model.First().Uin"></label>
+		</th>
+		<th>
+			<label asp-for="@Model.First().InstallStatus"></label>
+		</th>
+		<th>
+			<label asp-for="@Model.First().WarehouseStatus"></label>
+		</th>
+		<th></th>
+	</tr>
+	</thead>
+	<tbody>
+	@foreach (var item in Model)
+	{
+		<tr>
+			<td>
+				@item.Name
+			</td>
+			<td>
+				@item.Material
+			</td>
+			<td>
+				@item.Uin
+			</td>
+			<td>
+				@item.InstallStatus
+			</td>
+			<td>
+				@item.WarehouseStatus
+			</td>
+			<td>
+				<a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+				<a asp-action="Info" asp-route-id="@item.Id">Info</a> |
+				<a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+			</td>
+		</tr>
+	}
+	</tbody>
+</table>

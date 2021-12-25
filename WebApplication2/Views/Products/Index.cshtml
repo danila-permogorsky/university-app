@@ -1,0 +1,48 @@
+﻿@model System.Collections.Generic.IEnumerable<Final.Models.ViewModels.ProductViewModels.ProductViewModel>
+
+@{
+	ViewData["Title"] = "Index";
+}
+ 
+<h1>Products</h1>
+ 
+<p>
+	<a asp-action="Create">Create new</a>
+</p>
+<table class="table">
+	<thead>
+	<tr>
+		<th>
+			<label asp-for="@Model.First().Name"></label>
+		</th>
+		<th>
+			<label asp-for="@Model.First().SerialNumber"></label>
+		</th>
+		<th>
+			<label asp-for="@Model.First().AssemblyStatus"></label>
+		</th>
+		<th></th>
+	</tr>
+	</thead>
+	<tbody>
+	@foreach (var item in Model)
+	{
+		<tr>
+			<td>
+				@item.Name
+			</td>
+			<td>
+				@item.SerialNumber
+			</td>
+			<td>
+				@item.AssemblyStatus
+			</td>
+			<td>
+				<a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+				<a asp-action="Info" asp-route-id="@item.Id">Info</a> |
+				<a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+			</td>
+		</tr>
+	}
+	</tbody>
+</table>
