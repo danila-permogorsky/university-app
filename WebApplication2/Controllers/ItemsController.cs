@@ -1,30 +1,31 @@
 ﻿using AutoMapper;
+using Final.Controllers;
 using Final.Models.Dto;
 using Final.Models.ItemViewModels;
-using Final.Models.Services;
 using Final.Models.ViewModels.ItemViewModels;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using WebApplication2.Models.Entities;
+using WebApplication2.Models.Services;
 
-namespace Final.Controllers;
+namespace WebApplication2.Controllers;
 
 public class ItemsController : Controller
 {
 	private readonly ILogger<HomeController> _logger;
 	private readonly IMapper _mapper;
-	private readonly IItemService _itemService;
+	private readonly IService<Item, ItemDto> _service;
 
-	public ItemsController(ILogger<HomeController> logger, IMapper mapper, IItemService itemService)
+	public ItemsController(ILogger<HomeController> logger, IMapper mapper, IService<Item, ItemDto> service)
 	{
 		_logger = logger;
 		_mapper = mapper;
-		_itemService = itemService;
+		_service = service;
 	}
 
 	[HttpGet]
-	public IActionResult Index()
+	public async Task<IActionResult> Index()
 	{
-		var items = _mapper.Map<IEnumerable<ItemDto>, IEnumerable<ItemViewModel>>(_itemService.GetAll());
+		var items = _mapper.Map<IEnumerable<ItemDto>, IEnumerable<ItemViewModel>>( await _service.GetAllAsync());
 		return View(items);
 	}
 
@@ -33,13 +34,14 @@ public class ItemsController : Controller
 	{
 		if (id == null)
 			return NotFound();
+		
+		var item = await _service.GetAsync((int) id);
+		var model = _mapper.Map<ItemViewModel>(item);
 
-		var viewModel = _mapper.Map<ItemViewModel>( await _itemService.GetItemAsync((int) id));
-
-		if (viewModel == null)
+		if (model == null)
 			return NotFound();
 
-		return View(viewModel);
+		return View(model);
 	}
 
 	[HttpGet]
@@ -54,26 +56,28 @@ public class ItemsController : Controller
 		if (id == null)
 			return NotFound();
 
-		var editModel = _mapper.Map<EditItemViewModel>(await _itemService.GetItemAsync((int) id));
 
-		if (editModel == null)
+		var item = await _service.GetAsync((int) id);
+		var model = _mapper.Map<EditItemViewModel>(item);
+
+		if (model == null)
 			return NotFound();
 
-		return View(editModel);
+		return View(model);
 	}
 
 	[HttpGet]
-	public IActionResult Delete(int? id)
+	public async Task<IActionResult> Delete(int? id)
 	{
 		if (id == null)
 			return NotFound();
 
-		var deleteModel = _mapper.Map<DeleteItemViewModel>(_itemService.Delete((int) id));
-
-		if (deleteModel == null)
+		var model = _mapper.Map<DeleteItemViewModel>(await _service.GetAsync((int) id));
+		
+		if (model == null)
 			return NotFound();
 
-		return View(deleteModel);
+		return View(model);
 	}
 	
 	[HttpPost]
@@ -82,8 +86,8 @@ public class ItemsController : Controller
 	public async Task<IActionResult> Create(CreateItemViewModel inputModel)
 	{
 		if (!ModelState.IsValid) return View(inputModel);
-
-		await _itemService.Add(_mapper.Map<ItemDto>(inputModel));
+		
+		await _service.SaveAsync(_mapper.Map<ItemDto>(inputModel));
 		
 		return RedirectToAction(nameof(Index));
 	}
@@ -92,17 +96,13 @@ public class ItemsController : Controller
 	[HttpPost]
 	// [Authorize(Roles = "Admin")]
 	// [ValidateAntiForgeryToken]
-	public IActionResult Edit(int id, EditItemViewModel editViewModel)
+	public async Task<IActionResult> Edit(int id, EditItemViewModel editViewModel)
 	{
 		if (!ModelState.IsValid) return View(editViewModel);
 
-		var detail = _mapper.Map<ItemDto>(editViewModel);
-		detail.Id = id;
-
-		var result = _itemService.Update(detail);
-
-		if (result == null)
-			return NotFound();
+		var itemDto = _mapper.Map<ItemDto>(editViewModel);
+		itemDto.Id = id;
+		await _service.UpdateAsync(itemDto);
 
 		return RedirectToAction(nameof(Index));
 	}
@@ -110,14 +110,11 @@ public class ItemsController : Controller
 	[HttpPost, ActionName("Delete")]
 	// [Authorize(Roles = "Admin")]
 	// [ValidateAntiForgeryToken]
-	public IActionResult DeleteConfirmed(int id)
+	public async Task<IActionResult> DeleteConfirmed(int id)
 	{
-		var detail = _itemService.Delete(id);
+		var item = await _service.DeleteAsync((int) id);
 
-		if (detail == null)
-			return NotFound();
-			
-		_logger.LogTrace($"Detail with {detail.Id} has been deleted");
+		_logger.LogTrace($"Item with {item.Id} has been deleted");
 		return RedirectToAction(nameof(Index));
 	}
 }

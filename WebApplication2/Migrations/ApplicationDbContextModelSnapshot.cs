@@ -152,7 +152,7 @@ namespace Final.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Items");
+                    b.ToTable("Items", (string)null);
                 });
 
             modelBuilder.Entity("WebApplication2.Models.Entities.ItemProduct", b =>
@@ -167,7 +167,7 @@ namespace Final.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("ItemProducts");
+                    b.ToTable("ItemProducts", (string)null);
                 });
 
             modelBuilder.Entity("WebApplication2.Models.Entities.Product", b =>
@@ -190,7 +190,7 @@ namespace Final.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Products");
+                    b.ToTable("Products", (string)null);
                 });
 
             modelBuilder.Entity("WebApplication2.Models.Entities.Role", b =>

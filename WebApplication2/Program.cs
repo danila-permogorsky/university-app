@@ -1,8 +1,6 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Final.Data;
-using Final.Models;
-using Final.Models.Services;
 using WebApplication2.Data;
 using WebApplication2.Models.Entities;
 using WebApplication2.Models.Services;
@@ -28,9 +26,7 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
 builder.Services.AddAutoMapper(typeof(Program));
 
-builder.Services.AddScoped<IItemService, ItemService>();
-builder.Services.AddScoped<IProductService, ProductService>();
-builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+builder.Services.AddScoped(typeof(IService<,>), typeof(Service<,>));
 
 
 var app = builder.Build();

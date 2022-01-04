@@ -25,6 +25,7 @@
 			<div class="form-group">
 				<label asp-for="AssemblyStatus" class="control-label"></label>
 				<div class="col-md-10">
+					@* <select asp-for="AssemblyStatus" asp-items="Html.DropDownListFor(m => m.)"></select> *@
 					<select asp-for="AssemblyStatus" asp-items="Html.GetEnumSelectList<AssemblyStatus>()">
 						<option selected="selected" value="">Select the status</option>
 					</select>

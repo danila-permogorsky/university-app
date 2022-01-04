@@ -1,9 +1,10 @@
 ﻿using AutoMapper;
 using Final.Controllers;
 using Final.Models.Dto;
-using Final.Models.Services;
 using Final.Models.ViewModels.ProductViewModels;
 using Microsoft.AspNetCore.Mvc;
+using WebApplication2.Models.Entities;
+using WebApplication2.Models.Services;
 
 namespace WebApplication2.Controllers;
 
@@ -11,19 +12,19 @@ public class ProductsController : Controller
 {
 	private readonly ILogger<HomeController> _logger;
 	private readonly IMapper _mapper;
-	private readonly IProductService _productService;
+	private readonly IService<Product, ProductDto> _service;
 
-	public ProductsController(ILogger<HomeController> logger, IMapper mapper, IProductService productService)
+	public ProductsController(ILogger<HomeController> logger, IMapper mapper, IService<Product, ProductDto> service)
 	{
 		_logger = logger;
 		_mapper = mapper;
-		_productService = productService;
+		_service = service;
 	}
 
 	[HttpGet]
-	public IActionResult Index()
+	public async Task<IActionResult> Index()
 	{
-		var products = _mapper.Map<IEnumerable<ProductDto>, IEnumerable<ProductViewModel>>(_productService.GetAll());
+		var products = _mapper.Map<IEnumerable<ProductDto>, IEnumerable<ProductViewModel>>( await _service.GetAllAsync());
 		return View(products);
 	}
 
@@ -33,7 +34,7 @@ public class ProductsController : Controller
 		if (id == null)
 			return NotFound();
 
-		var viewModel = _mapper.Map<ProductViewModel>( await _productService.GetProductAsync((int) id));
+		var viewModel = _mapper.Map<ProductViewModel>( await _service.GetAsync((int) id));
 
 		if (viewModel == null)
 			return NotFound();
@@ -53,7 +54,7 @@ public class ProductsController : Controller
 		if (id == null)
 			return NotFound();
 
-		var editModel = _mapper.Map<EditProductViewModel>(await _productService.GetProductAsync((int) id));
+		var editModel = _mapper.Map<EditProductViewModel>(await _service.GetAsync((int) id));
 
 		if (editModel == null)
 			return NotFound();
@@ -62,12 +63,12 @@ public class ProductsController : Controller
 	}
 
 	[HttpGet]
-	public IActionResult Delete(int? id)
+	public async Task<IActionResult> Delete(int? id)
 	{
 		if (id == null)
 			return NotFound();
 
-		var deleteModel = _mapper.Map<DeleteProductViewModel>(_productService.Delete((int) id));
+		var deleteModel = _mapper.Map<DeleteProductViewModel>( await _service.GetAsync((int) id));
 
 		if (deleteModel == null)
 			return NotFound();
@@ -82,7 +83,7 @@ public class ProductsController : Controller
 	{
 		if (!ModelState.IsValid) return View(inputModel);
 
-		await _productService.Add(_mapper.Map<ProductDto>(inputModel));
+		await _service.SaveAsync(_mapper.Map<ProductDto>(inputModel));
 		
 		return RedirectToAction(nameof(Index));
 	}
@@ -91,17 +92,14 @@ public class ProductsController : Controller
 	[HttpPost]
 	// [Authorize(Roles = "Admin")]
 	// [ValidateAntiForgeryToken]
-	public IActionResult Edit(int id, EditProductViewModel editViewModel)
+	public async Task<IActionResult> Edit(int id, EditProductViewModel editViewModel)
 	{
 		if (!ModelState.IsValid) return View(editViewModel);
 
 		var product = _mapper.Map<ProductDto>(editViewModel);
 		product.Id = id;
 
-		var result = _productService.Update(product);
-
-		if (result == null)
-			return NotFound();
+		await _service.UpdateAsync(product);
 
 		return RedirectToAction(nameof(Index));
 	}
@@ -109,13 +107,10 @@ public class ProductsController : Controller
 	[HttpPost, ActionName("Delete")]
 	// [Authorize(Roles = "Admin")]
 	// [ValidateAntiForgeryToken]
-	public IActionResult DeleteConfirmed(int id)
+	public async Task<IActionResult> DeleteConfirmed(int id)
 	{
-		var detail = _productService.Delete(id);
+		var detail = await _service.DeleteAsync(id);
 
-		if (detail == null)
-			return NotFound();
-			
 		_logger.LogTrace($"Detail with {detail.Id} has been deleted");
 		return RedirectToAction(nameof(Index));
 	}

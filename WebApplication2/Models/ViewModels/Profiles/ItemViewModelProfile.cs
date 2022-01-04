@@ -10,7 +10,7 @@ public class ItemViewModelProfile : Profile
 	public ItemViewModelProfile()
 	{
 		CreateMap<ItemDto, CreateItemViewModel>().ReverseMap();
-		CreateMap<ItemDto, DeleteItemViewModel>();
+		CreateMap<ItemDto, DeleteItemViewModel>().ReverseMap();
 		CreateMap<ItemDto, EditItemViewModel>().ReverseMap();
 		CreateMap<ItemDto, ItemViewModel>();
 	}

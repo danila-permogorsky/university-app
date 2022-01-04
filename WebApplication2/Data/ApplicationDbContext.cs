@@ -15,6 +15,7 @@ public class ApplicationDbContext : IdentityDbContext<User, Role, int>
 	protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 	{
 		optionsBuilder.LogTo(Console.WriteLine);
+		optionsBuilder.EnableSensitiveDataLogging();
 		base.OnConfiguring(optionsBuilder);
 	}
 
